@@ -7,7 +7,7 @@
     "noImplicitAny": false,
     "incremental": true,
     "moduleResolution": "node",
-    "types": ["typeorm", "reflect-metadata"],
+    "types": ["reflect-metadata"],
     "strictPropertyInitialization": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
@@ -19,6 +19,6 @@
       "*": ["node_modules/*", "src/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "databaseHandler.ts"],
   "exclude": []
 }

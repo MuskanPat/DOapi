@@ -1,7 +1,6 @@
 // database.ts
 import { DataSource, DataSourceOptions } from "typeorm";
 import { DispatchOrderMine } from "../entities/DisptachOrderMine";
-import { DatabaseHandler } from "./databaseHandler";
 
 export const dbConfig: DataSourceOptions = {
   type: process.env.DB_TYPE as any,
@@ -15,13 +14,14 @@ export const dbConfig: DataSourceOptions = {
 };
 
 const dataSource = new DataSource(dbConfig);
-export const dbHandler = new DatabaseHandler(dataSource);
+let dbHandler: DataSource;
 
 export const connectDatabase = async () => {
   try {
     console.log("Connecting with database...");
-    await dataSource.initialize();
+    dbHandler = await dataSource.initialize();
     console.log("Database connected successfully");
+    return dbHandler;
   } catch (error) {
     console.error("Database connection error:", error);
     process.exit(1);

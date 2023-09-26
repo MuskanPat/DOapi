@@ -1,18 +1,19 @@
+import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import express from "express";
-import {
-  connectDatabase,
-  disconnectDatabase,
-  dbHandler,
-} from "./database/database";
+import { connectDatabase, disconnectDatabase } from "./database/database";
 import { dispatchOrderRouter } from "./routes/disptachOrderRoutes";
+import DispatchOrderService from "./dispatch-order/dispatch-order-service";
+import DispatchOrderRepository from "./dispatch-order/dispatch-order-repository";
+import { DataSource } from "typeorm";
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use("/dispatchorder", dispatchOrderRouter(dbHandler));
+let dbHandler: DataSource;
+let server: any;
+const port = process.env.PORT || 5000;
 
 const signals = {
   SIGHUP: 1,
@@ -20,13 +21,20 @@ const signals = {
   SIGTERM: 15,
 };
 
-let server;
-const port = process.env.PORT || 5000;
-
 const startServer = async () => {
   try {
-    await connectDatabase();
+    dbHandler = await connectDatabase();
     console.log("Database connected successfully");
+
+    const dispatchOrderRepository: DispatchOrderRepository =
+      new DispatchOrderRepository(dbHandler);
+
+    const dispatchOrderService = new DispatchOrderService(
+      dispatchOrderRepository,
+      dbHandler
+    );
+
+    app.use("/dispatchorder", dispatchOrderRouter(dispatchOrderService));
 
     server = app.listen({ port }, () =>
       console.log(`Server listening at port: ${port}`)

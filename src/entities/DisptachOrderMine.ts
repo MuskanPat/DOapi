@@ -3,7 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 @Entity("dispatch_order_mines")
 export class DispatchOrderMine {
   @PrimaryGeneratedColumn()
-  DO_number!: number;
+  DO_number!: string;
 
   @Column({ name: "is_DO_with_PO", type: "boolean" })
   is_DO_with_PO!: boolean;
