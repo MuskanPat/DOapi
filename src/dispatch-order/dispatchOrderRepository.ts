@@ -1,16 +1,5 @@
-// import { DataSource } from 'typeorm';
-
-// export default class DispatchOrderRepository {
-//     dhHandler: DataSource;
-
-//     getDoByNumber(doNumber: string): Promise<any>{
-//         return Promise.resolve({});
-//     }
-// }
-
-//----------------------------------------------------------------
 import { DataSource } from "typeorm";
-import { DispatchOrderMine } from "../entities/DisptachOrderMine";
+import { DispatchOrderMine } from "../entities/dispatchOrderMine";
 
 export default class DispatchOrderRepository {
   dbHandler: DataSource;
@@ -31,6 +20,23 @@ export default class DispatchOrderRepository {
     }
   }
 
+  async getDOByNumber(
+    doNumber: string
+  ): Promise<DispatchOrderMine | undefined> {
+    try {
+      const repository = this.dbHandler.getRepository(DispatchOrderMine);
+      const dispatchOrder = await repository.findOne({
+        where: { doNumber: doNumber },
+      });
+
+      return dispatchOrder;
+    } catch (error) {
+      throw new Error(
+        `Failed to fetch DispatchOrderMine by number: ${error.message}`
+      );
+    }
+  }
+
   async createDO(
     dispatchOrderData: DispatchOrderMine
   ): Promise<DispatchOrderMine> {
@@ -46,26 +52,14 @@ export default class DispatchOrderRepository {
     }
   }
 
-  async getDOByNumber(
-    DO_number: string
-  ): Promise<DispatchOrderMine | undefined> {
-    try {
-      const repository = this.dbHandler.getRepository(DispatchOrderMine);
-      const dispatchOrder = await repository.findOne({ where: { DO_number } });
-
-      return dispatchOrder;
-    } catch (error) {
-      throw new Error(
-        `Failed to fetch DispatchOrderMine by number: ${error.message}`
-      );
-    }
-  }
-
   async updateDO(
     doNumber: string,
     updatedFields: Partial<DispatchOrderMine>
   ): Promise<DispatchOrderMine | undefined> {
     try {
+      console.log(`Updating Dispatch Order with DO number: ${doNumber}`);
+      console.log(`Updated Fields: ${JSON.stringify(updatedFields)}`);
+
       const repository = this.dbHandler.getRepository(DispatchOrderMine);
 
       const existingDO = await this.getDOByNumber(doNumber);
@@ -76,9 +70,12 @@ export default class DispatchOrderRepository {
       repository.merge(existingDO, updatedFields);
 
       const updatedDispatchOrder = await repository.save(existingDO);
+      console.log("Updated Dispatch Order:", updatedDispatchOrder);
 
       return updatedDispatchOrder;
     } catch (error) {
+      console.error("Failed to update DispatchOrderMine:", error.message);
+
       throw new Error(`Failed to update DispatchOrderMine: ${error.message}`);
     }
   }

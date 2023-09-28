@@ -3,8 +3,8 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import { connectDatabase, disconnectDatabase } from "./database/database";
 import { dispatchOrderRouter } from "./routes/disptachOrderRoutes";
-import DispatchOrderService from "./dispatch-order/dispatch-order-service";
-import DispatchOrderRepository from "./dispatch-order/dispatch-order-repository";
+import DispatchOrderService from "./dispatch-order/dispatchOrderService";
+import DispatchOrderRepository from "./dispatch-order/dispatchOrderRepository";
 import { DataSource } from "typeorm";
 
 const app = express();
@@ -29,10 +29,7 @@ const startServer = async () => {
     const dispatchOrderRepository: DispatchOrderRepository =
       new DispatchOrderRepository(dbHandler);
 
-    const dispatchOrderService = new DispatchOrderService(
-      dispatchOrderRepository,
-      dbHandler
-    );
+    const dispatchOrderService = new DispatchOrderService(dbHandler);
 
     app.use("/dispatchorder", dispatchOrderRouter(dispatchOrderService));
 

@@ -1,6 +1,6 @@
 // database.ts
 import { DataSource, DataSourceOptions } from "typeorm";
-import { DispatchOrderMine } from "../entities/DisptachOrderMine";
+import { DispatchOrderMine } from "../entities/dispatchOrderMine";
 
 export const dbConfig: DataSourceOptions = {
   type: process.env.DB_TYPE as any,
